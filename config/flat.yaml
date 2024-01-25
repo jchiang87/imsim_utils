@@ -31,12 +31,12 @@ image.random_seed: ""
 
 output.dir:
     type: FormattedStr
-    format: calib_frames_test/%08d
+    format: calib_frames/%08d
     items:
         - "@input.opsim_data.visit"
 output.det_num.first: 4
 output.nproc: 1
-output.nfiles: 1
+output.nfiles: 2
 output.camera: LsstComCamSim
 output.truth: ""
 
