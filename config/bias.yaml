@@ -38,6 +38,8 @@ output.nproc: 1
 output.nfiles: 2
 output.camera: LsstComCamSim
 output.truth: ""
+output.readout.added_keywords: {'IMGTYPE': 'bias', 'REASON': 'bias',
+                                'OBSTYPE': 'calibration', 'PROGRAM': 'calibration'}
 
 output.readout.file_name:
     type: FormattedStr

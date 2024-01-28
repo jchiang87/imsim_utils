@@ -40,12 +40,12 @@ output.nfiles: 1
 output.camera: LsstComCamSim
 output.timeout: 1e6
 output.truth: ""
-output.readout.added_keywords: {'IMGTYPE': 'flat', 'REASON': 'flat',
+output.readout.added_keywords: {'IMGTYPE': 'flat', 'REASON': 'ptc',
                                 'OBSTYPE': 'calibration', 'PROGRAM': 'calibration'}
 
 output.readout.file_name:
     type: FormattedStr
-    format : flat_%08d-%1d-%s-%s-det%03d.fits.fz
+    format : ptc_%08d-%1d-%s-%s-det%03d.fits.fz
     items:
         - { type: OpsimData, field: observationId }
         - { type: OpsimData, field: snap }
