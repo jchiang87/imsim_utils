@@ -1,0 +1,46 @@
+modules: [imsim]
+template: imsim-config-skycat
+
+output.camera: LsstComCamSim
+
+# Use skyCatalogs for obtaining the objects to render.
+input.sky_catalog:
+  file_name: /sdf/data/rubin/shared/ops-rehearsal-3/imSim_catalogs/skyCatalogs/skyCatalog.yaml
+  band: { type: OpsimData, field: band }
+  mjd: { type: OpsimData, field: mjd }
+  approx_nobjects: 1000
+  obj_types: [star]
+  max_flux: 3e7
+
+input.opsim_data.file_name: bright_sky_calib_frames.db
+input.opsim_data.visit: 4000000
+
+# Disable the atmospheric PSF
+input.atm_psf: ""
+psf:
+    type: Convolve
+    items:
+        -
+           type: Gaussian
+           fwhm: 0.8
+        -
+           type: Gaussian
+           fwhm: 0.3
+
+input.checkpoint.dir: checkpoint
+
+image.nobjects: 0
+image.random_seed: '@input.opsim_data.visit'
+image.nbatch_per_checkpoint: 10
+
+output.nproc: 1
+output.det_num.first: 0
+output.nfiles: 1
+
+output.dir:
+    type: FormattedStr
+    format: flats/%08d
+    items:
+        - "@input.opsim_data.visit"
+output.timeout: 1e5
+output.truth: ""
