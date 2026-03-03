@@ -1,0 +1,16 @@
+includeConfigs:
+  - ${PWD}/bps/bps_qgraph_options.yaml
+  - ${PWD}/bps/bps_parsl_config.yaml
+
+pipelineYaml: "${PWD}/pipelines/cpDefects.yaml"
+instrument: ${INSTRUMENT_CLASS}
+
+payload:
+  dataset_selection: ${DATASET_SELECTION}
+  dataset_label: ${DATASET_LABEL}
+  weekly: ${WEEKLY}
+  payload_modifier: ${PAYLOAD_MODIFIER}
+  inCollection: u/{operator}/flat_bootstrap{payload_modifier}_{dataset_label}_{weekly}
+  payloadName: defects{payload_modifier}_{dataset_label}_{weekly}
+  butlerConfig: ${BUTLER_CONFIG}
+  dataQuery: "instrument='${INSTRUMENT_NAME}'"

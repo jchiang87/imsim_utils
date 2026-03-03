@@ -1,0 +1,14 @@
+description: cp_pipe LSSTCam flat calibration construction.
+instrument: lsst.obs.lsst.LsstCamSim
+imports:
+  - location: $CP_PIPE_DIR/pipelines/_ingredients/cpFlatCorrectedLSST.yaml
+tasks:
+  cpFlatCombine:
+    class: lsst.cp.pipe.CalibCombineByFilterTask
+    config:
+      doVignetteMask: true
+      # This radius is from RFC-1120.
+      vignette.radius: 350.0
+      doPartialVignetteMask: true
+      # This radius is from RFC-1125.
+      partialVignette.radius: 317.0
