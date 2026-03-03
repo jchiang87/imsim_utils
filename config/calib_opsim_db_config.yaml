@@ -1,0 +1,15 @@
+template_db_file: /sdf/data/rubin/user/jchiang/imSim/rubin_sim_data/opsim_cadences/baseline_v3.2_10yrs.db
+mjd_start: 61041.0
+visit_start: 3000000
+nbias: 20
+ndark: 20
+dark_time: 100.0
+nflat: 20
+flat_exptime: 500.0
+bands: ['u', 'g', 'r', 'i', 'z', 'y']
+num_pairs: 100
+ptc_exptime_min: 0.3
+ptc_exptime_max: 1e3
+outfile: calib_frames.db
+
+
