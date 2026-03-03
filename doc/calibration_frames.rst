@@ -8,9 +8,9 @@ Simulating Calibration Frames
       $ python scripts/make_calib_opsim_db.py
 
 2. Run galsim jobs in slurm using
+
    * ``config/[bias,dark,flat,ptc].yaml`` as imsim config templates
-   * ``scripts/run_imsim_jobs.py`` to manage the galsim instances using
-     parsl
+   * ``scripts/run_imsim_jobs.py`` to manage the galsim instances using parsl
    * ``scripts/run_calib_jobs.sbatch`` to submit the jobs to slurm
 
 Generating Calibration Products
