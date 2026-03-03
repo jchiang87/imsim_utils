@@ -1,14 +1,25 @@
 import os
 import sqlite3
+import argparse
+import yaml
 import click
 import numpy as np
 import pandas as pd
 
+
+parser = argparse.ArgumentParser()
+parser.add_argument("config_file", type=str,
+                    help="Config file containing simulation parameters")
+config_file = parser.parse_args().config_file
+
+with open(config_file) as fobj:
+    config = yaml.safe_load(config_file)
+
 # Read in an existing opsim_db file to provide a template for the
 # columns in each entry in the calibration exposure db.
-opsim_db_file = "/sdf/data/rubin/user/jchiang/imSim/rubin_sim_data/opsim_cadences/baseline_v3.2_10yrs.db"
-assert os.path.isfile(opsim_db_file)
-with sqlite3.connect(opsim_db_file) as con:
+template_db_file = config['template_db_file']
+assert os.path.isfile(template_db_file)
+with sqlite3.connect(template_db_file) as con:
     df0 = pd.read_sql("select * from observations limit 10", con)
 
 # Make a template dict with default entries from the first row.
@@ -17,13 +28,13 @@ row = dict(df0.iloc[0])
 # Create a new DataFrame with the calibration frame entries.
 df = pd.DataFrame(columns=df0.columns)
 
-mjd = 60326.    # 2024-01-17 00:00:00
-visit = 3000000
+mjd = config['mjd_start']
+visit = config['visit_start']
 
 # Bias frames
 exptime = 0
 dt = (exptime + 10.)/86400.
-nbias = 20
+nbias = config['nbias']
 for i in range(nbias):
     row.update(dict(observationId=visit,
                     observationStartMJD=mjd,
@@ -35,9 +46,9 @@ for i in range(nbias):
     mjd += dt
 
 # Dark frames
-exptime = 100.
+exptime = config['dark_time']
 dt = (exptime + 10.)/86400.
-ndark = 20
+ndark = config['ndark']
 for i in range(ndark):
     row.update(dict(observationId=visit,
                     observationStartMJD=mjd,
@@ -49,10 +60,10 @@ for i in range(ndark):
     mjd += dt
 
 # Flat frames, assume 100 counts/pixel illumination
-exptime = 500.
+exptime = config['flat_exptime']
 dt = (exptime + 10.)/86400.
-bands = ['g', 'r', 'i']
-nflat = 20
+bands = config['bands']
+nflat = config['nflat']
 for band in bands:
     for i in range(nflat):
         row.update(dict(observationId=visit,
@@ -66,8 +77,11 @@ for band in bands:
         mjd += dt
 
 # PTC frames, assume 100 counts/pixel illumination
-num_pairs = 100
-exptimes = np.logspace(np.log10(0.3), np.log10(1e3), num_pairs)
+num_pairs = config['num_pairs']
+ptc_exptime_min = config['ptc_exptime_min']
+ptc_exptime_max = config['ptc_exptime_max']
+exptimes = np.logspace(np.log10(ptc_exptime_min), np.log10(ptc_exptime_max),
+                       num_pairs)
 for i, exptime in enumerate(exptimes):
     dt = (exptime + 10.)/86400.
     for j in (0, 1):
@@ -82,7 +96,7 @@ for i, exptime in enumerate(exptimes):
 
 
 # Write out the new DataFrame as an sqlite file.
-outfile = "calib_frames.db"
+outfile = config['outfile']
 if os.path.isfile(outfile):
     if click.confirm(f"Overwrite {outfile}?", default=True):
         os.remove(outfile)
