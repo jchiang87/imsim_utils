@@ -5,7 +5,7 @@ nbias: 20
 ndark: 20
 dark_time: 100.0
 nflat: 20
-flat_exptime: 500.0
+flat_exptime: 200.0
 bands: ['u', 'g', 'r', 'i', 'z', 'y']
 num_pairs: 100
 ptc_exptime_min: 0.3
