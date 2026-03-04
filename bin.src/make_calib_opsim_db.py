@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 import sqlite3
 import argparse
@@ -13,7 +14,7 @@ parser.add_argument("config_file", type=str,
 config_file = parser.parse_args().config_file
 
 with open(config_file) as fobj:
-    config = yaml.safe_load(config_file)
+    config = yaml.safe_load(fobj)
 
 # Read in an existing opsim_db file to provide a template for the
 # columns in each entry in the calibration exposure db.
@@ -40,7 +41,7 @@ for i in range(nbias):
                     observationStartMJD=mjd,
                     visitExposureTime=exptime,
                     numExposures=1,
-                    target='BIAS'))
+                    target_name='BIAS'))
     df.loc[len(df)] = row
     visit += 1
     mjd += dt
@@ -54,7 +55,7 @@ for i in range(ndark):
                     observationStartMJD=mjd,
                     numExposures=1,
                     visitExposureTime=exptime,
-                    target='DARK'))
+                    target_name='DARK'))
     df.loc[len(df)] = row
     visit += 1
     mjd += dt
@@ -71,15 +72,15 @@ for band in bands:
                         numExposures=1,
                         visitExposureTime=exptime,
                         filter=band,
-                        target='FLAT'))
+                        target_name='FLAT'))
         df.loc[len(df)] = row
         visit += 1
         mjd += dt
 
 # PTC frames, assume 100 counts/pixel illumination
 num_pairs = config['num_pairs']
-ptc_exptime_min = config['ptc_exptime_min']
-ptc_exptime_max = config['ptc_exptime_max']
+ptc_exptime_min = float(config['ptc_exptime_min'])
+ptc_exptime_max = float(config['ptc_exptime_max'])
 exptimes = np.logspace(np.log10(ptc_exptime_min), np.log10(ptc_exptime_max),
                        num_pairs)
 for i, exptime in enumerate(exptimes):
@@ -89,7 +90,7 @@ for i, exptime in enumerate(exptimes):
                         observationStartMJD=mjd,
                         numExposures=1,
                         visitExposureTime=exptime,
-                        target='PTC'))
+                        target_name='PTC'))
         df.loc[len(df)] = row
         visit += 1
         mjd += dt
