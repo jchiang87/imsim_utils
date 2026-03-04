@@ -11,11 +11,10 @@ __all__ = ["load_wq_config"]
 
 def work_queue_executor(label="work_queue",
                         worker_options="--memory=182000",  # Theta max - 10GB
-                        port=9000,
                         provider=None):
     return WorkQueueExecutor(
         label="work_queue",
-        port=port,
+        port=0,  # Let parsl find a free port.
         shared_fs=True,
         autolabel=False,
         max_retries=1,
@@ -33,7 +32,7 @@ def local_provider(nodes_per_block=1):
     return LocalProvider(**provider_options)
 
 
-def load_wq_config(memory=182000, port=9001, hub_port=None,
+def load_wq_config(memory=182000, hub_port=None,
                    monitor=True, monitoring_interval=3*60,
                    max_threads=1, use_work_queue=True,
                    run_dir='runinfo'):
@@ -44,7 +43,6 @@ def load_wq_config(memory=182000, port=9001, hub_port=None,
         provider = local_provider()
         worker_options = f"--memory={memory}"
         executors.append(work_queue_executor(worker_options=worker_options,
-                                             port=port,
                                              provider=provider))
 
     if monitor:
