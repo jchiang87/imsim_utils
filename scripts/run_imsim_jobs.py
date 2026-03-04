@@ -4,46 +4,59 @@ import socket
 import sqlite3
 import pandas as pd
 from imsim_utils import GalSimJobGenerator, load_wq_config
-from desc_roman_sims.parsl.parsl_config import load_wq_config
 
-cores_per_node = 32
-nproc = 4
-max_threads = cores_per_node // nproc  # 1 galsim instance per thread
-
-hostname = socket.gethostname()
-username = "jchiang"
-run_dir = f'runinfo/{hostname}_{username}'
-
-load_wq_config(max_threads=max_threads, use_work_queue=False, monitor=False,
-               run_dir=run_dir)
-
-def full_path(basename):
-    return os.path.join("/sdf/data/rubin/user/jchiang/ops_rehearsal_3/calibs",
-                        basename)
-
-calib_yaml = dict(BIAS="bias.yaml", DARK="dark.yaml", FLAT="flat.yaml",
+calib_yaml = dict(BIAS="bias.yaml", DARK="dark.yaml", FLAT="sky_flat.yaml",
                   PTC="ptc.yaml")
 calib_type = sys.argv[1]
 
-# Remaining visits
-incomplete_visits = {'FLAT': [3000047, 3000049, 3000051, 3000052, 3000053,
-                              3000055, 3000056, 3000057, 3000058, 3000059,
-                              3000060, 3000061, 3000062, 3000063, 3000064,
-                              3000065, 3000066, 3000067, 3000068, 3000069,
-                              3000070, 3000071, 3000072, 3000073],
-                     'PTC': []}
+# For a full perlmutter node, use 120 cores, reserving the remaining 8
+# for workflow management and system-related work:
+cores_per_node = 120
+#cores_per_node = 4
+
+# Number of processes used by each galsim instance:
+nproc = 4
+
+# There will be one galsim instance per thread:
+max_threads = cores_per_node // nproc
+
+hostname = socket.gethostname()
+username = os.environ['USER']
+run_dir = f'runinfo/{hostname}_{username}'
+
+memory = 4000*cores_per_node  # Assume 4 GB per core.
+load_wq_config(
+    memory=memory,
+    max_threads=max_threads,
+    # Expect all jobs to be the same size so don't need work_queue:
+    use_work_queue=False,
+    monitor=False,
+    run_dir=run_dir
+)
+
+def full_path(basename):
+    return os.path.join("/pscratch/sd/j/jchiang8/Euclid_Joint_DDP/calibration/",
+                        basename)
 
 imsim_yaml = full_path(calib_yaml[calib_type])
 
-## Read in the visit list
-#with sqlite3.connect(full_path("calib_frames.db")) as con:
-#    df = pd.read_sql(f"select * from observations where target='{calib_type}'", con)
-#visits = df['observationId'].to_numpy()[-4:]
-#print(visits)
+# Read in the visit list
+if calib_type == "FLAT":
+    opsim_db_file = "sky_flat_calib_frames.db"
+else:
+    opsim_db_file = "calib_frames.db"
 
-visits = incomplete_visits[calib_type]
+assert os.path.isfile(opsim_db_file)
+with sqlite3.connect(full_path(opsim_db_file)) as con:
+    df = pd.read_sql("select * from observations where "
+                     f"target_name='{calib_type}'", con)
 
-target_dets = {_: set(range(9)) for _ in visits}
+visits = df['observationId'].to_numpy()
+print("number of visits:", len(visits))
+
+# target_dets specifies the detectors to simulate for each visit.
+target_dets = {_: set(range(90, 99)) for _ in visits}
+#target_dets = {_: set([94]) for _ in visits}
 generator = GalSimJobGenerator(imsim_yaml, visits,
                                nfiles=9, nproc=nproc,
                                target_dets=target_dets,
