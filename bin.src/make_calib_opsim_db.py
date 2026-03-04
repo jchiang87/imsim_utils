@@ -83,6 +83,7 @@ ptc_exptime_min = float(config['ptc_exptime_min'])
 ptc_exptime_max = float(config['ptc_exptime_max'])
 exptimes = np.logspace(np.log10(ptc_exptime_min), np.log10(ptc_exptime_max),
                        num_pairs)
+band = config['ptc_band']
 for i, exptime in enumerate(exptimes):
     dt = (exptime + 10.)/86400.
     for j in (0, 1):
@@ -90,6 +91,7 @@ for i, exptime in enumerate(exptimes):
                         observationStartMJD=mjd,
                         numExposures=1,
                         visitExposureTime=exptime,
+                        filter=band,
                         target_name='PTC'))
         df.loc[len(df)] = row
         visit += 1
