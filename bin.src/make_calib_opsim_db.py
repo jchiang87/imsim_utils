@@ -21,13 +21,10 @@ with open(config_file) as fobj:
 template_db_file = config['template_db_file']
 assert os.path.isfile(template_db_file)
 with sqlite3.connect(template_db_file) as con:
-    # Just consider the ~1st year of observations to speed up the file
-    # reading.
-    df0 = pd.read_sql("select * from observations limit 200000", con)
+    df0 = pd.read_sql("select * from observations limit 10", con)
 
-# Make a template dict with default entries from the row with the
-# brightest sky background, that value being used for sky flats.
-row = dict(df0.loc[df0['skyBrightness'].idxmin()])
+# Make a template dict with default entries from the first row.
+row = dict(df0.iloc[0])
 
 # Create a new DataFrame with the calibration frame entries.
 df = pd.DataFrame(columns=df0.columns)
@@ -63,7 +60,7 @@ for i in range(ndark):
     visit += 1
     mjd += dt
 
-# Sky flat frames, using the smallest skyBrightness magnitude entry.
+# Sky flat frames.  The sky level is set in sky_flat.yaml.
 exptime = config['flat_exptime']
 dt = (exptime + 10.)/86400.
 bands = config['bands']

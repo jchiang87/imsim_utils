@@ -24,6 +24,10 @@ input.opsim_data.visit: 4000000
 
 image.nobjects: 0
 image.random_seed: ""
+image.apply_sky_gradient: false
+# For a 60 sec exposure time, the following sky level will produce
+# ~30k e- per pixel.
+image.sky_level: 750000
 
 output.dir:
     type: FormattedStr
