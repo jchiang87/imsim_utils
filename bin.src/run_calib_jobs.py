@@ -61,11 +61,11 @@ load_wq_config(
 opsim_db_file = args.opsim_db_file
 
 assert os.path.isfile(opsim_db_file)
-with sqlite3.connect(full_path(opsim_db_file)) as con:
+with sqlite3.connect(config_path(opsim_db_file)) as con:
     df = pd.read_sql("select * from observations where "
                      f"target_name='{calib_type}'", con)
 
-imsim_yaml = calib_path(calib_yaml[calib_type])
+imsim_yaml = config_path(calib_yaml[calib_type])
 
 visits = df['observationId'].to_numpy()
 print("number of visits:", len(visits))
