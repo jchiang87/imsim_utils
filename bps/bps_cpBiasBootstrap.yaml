@@ -5,16 +5,16 @@ includeConfigs:
 isrTaskName: cpBiasBootstrapIsr
 extraQgraphOptions: "{isr_QgraphOptions}"
 
-pipelineYaml: "${PWD}/pipelines/cpBiasBootstrap.yaml"
+pipelineYaml: "${IMSIM_UTILS_DIR}/pipelines/cpBiasBootstrap.yaml"
 instrument: ${INSTRUMENT_CLASS}
 
-clusterAlgorithm: lsst.ctrl.bps.quantum_clustering_funcs.dimension_clustering
-cluster:
-  cp_bias_bootstrap_isr:
-    pipetasks: cpBiasBootstrapIsr
-    dimensions: detector
-    partitionDimensions: exposure
-    partitionMaxClusters: 1000
+#clusterAlgorithm: lsst.ctrl.bps.quantum_clustering_funcs.dimension_clustering
+#cluster:
+#  cp_bias_bootstrap_isr:
+#    pipetasks: cpBiasBootstrapIsr
+#    dimensions: detector
+#    partitionDimensions: exposure
+#    partitionMaxClusters: 1000
 
 payload:
   dataset_label: ${DATASET_LABEL}

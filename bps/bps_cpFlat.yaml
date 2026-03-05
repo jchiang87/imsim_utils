@@ -3,25 +3,24 @@ includeConfigs:
   - ${PWD}/bps/bps_parsl_config.yaml
 
 isrTaskName: cpFlatIsr
-extraQgraphOptions: "{isr_QgraphOptions} --config {isrTaskName}:doBrighterFatter=False"
+extraQgraphOptions: "{isr_QgraphOptions} --config {isrTaskName}:doBrighterFatter=False --config {isrTaskName}:doDeferredCharge=False"
 
-pipelineYaml: "${CP_PIPE_DIR}/pipelines/${INSTRUMENT_NAME}/cpFlat.yaml#cpFlatIsr,cpFlatMeasure,cpFlatNormalize,cpFlatCombine"
+pipelineYaml: "${IMSIM_UTILS_DIR}/pipelines/cpFlat.yaml#cpFlatIsr,cpFlatMeasure,cpFlatNormalize,cpFlatCombine"
 instrument: ${INSTRUMENT_CLASS}
 
-clusterAlgorithm: lsst.ctrl.bps.quantum_clustering_funcs.dimension_clustering
-cluster:
-  cp_flat_isr:
-    pipetasks: cpFlatIsr,cpFlatMeasure
-    dimensions: detector
-    partitionDimensions: exposure
-    partitionMaxClusters: 1000
+#clusterAlgorithm: lsst.ctrl.bps.quantum_clustering_funcs.dimension_clustering
+#cluster:
+#  cp_flat_isr:
+#    pipetasks: cpFlatIsr,cpFlatMeasure
+#    dimensions: detector
+#    partitionDimensions: exposure
+#    partitionMaxClusters: 1000
 
 payload:
-  dataset_selection: ${DATASET_SELECTION}
   dataset_label: ${DATASET_LABEL}
   weekly: ${WEEKLY}
   payload_modifier: ${PAYLOAD_MODIFIER}
   inCollection: u/{operator}/dark{payload_modifier}_{dataset_label}_{weekly}
   payloadName: flat{payload_modifier}_{dataset_label}_{weekly}
   butlerConfig: ${BUTLER_CONFIG}
-  dataQuery: "instrument='${INSTRUMENT_NAME}' and {dataset_selection} and exposure.observation_type='flat' and exposure.observation_reason in ('gain_stability', 'sflat', 'sflat_hi') ${DETECTOR_SELECTION}"
+  dataQuery: "instrument='${INSTRUMENT_NAME}' and exposure.observation_type='flat' and exposure.observation_reason='flat' ${DETECTOR_SELECTION}"

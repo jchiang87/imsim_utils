@@ -8,12 +8,12 @@ parsl:
 site:
   local:
     class: lsst.ctrl.bps.parsl.sites.Local
-    cores: 16
+    cores: 120
     monitorEnable: true
     monitorFilename: runinfo/monitoring.db
   task_vine:
     class: bps_parsl_sites.SlurmTaskVine
-    walltime: "1-00:00:00"
+    walltime: "00:30:00"
     qos: debug
     constraint: cpu
     exclusive: true
@@ -21,11 +21,10 @@ site:
     provider_options:
       init_blocks: 1
       min_blocks: 0
-      max_blocks: 5
+      max_blocks: 1
     scheduler_options: |
       #SBATCH --module=cvmfs
-      #SBATCH --account=rubin:commissioning
-      #SBATCH --partition=torino
-    worker_options: "--memory=700000"  # total memory in MB
+      #SBATCH --account=m1727
+    worker_options: "--memory=480000"  # total memory in MB
     monitorEnable: true
     monitorFilename: runinfo/monitoring.db

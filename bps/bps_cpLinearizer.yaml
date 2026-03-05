@@ -3,30 +3,29 @@ includeConfigs:
   - ${PWD}/bps/bps_parsl_config.yaml
 
 isrTaskName: cpLinearizerIsr
-extraQgraphOptions: "{isr_QgraphOptions} --config cpLinearizerPtcExtractPair:doExtractPhotodiodeData=False --config cpLinearizerPtcSolve:maxDeltaInitialPtcOutlierFit=10000 --config cpLinearizerSolve:usePhotodiode=False --config cpLinearizerSolve:splineKnots=5"
+extraQgraphOptions: "{isr_QgraphOptions} --config cpLinearizerPtcExtractPair:doExtractPhotodiodeData=False --config cpLinearizerPtcSolve:maxDeltaInitialPtcOutlierFit=10000 --config cpLinearizerSolve:usePhotodiode=False"
 
-pipelineYaml: "${PWD}/pipelines/cpLinearizer.yaml"
+pipelineYaml: "${IMSIM_UTILS_DIR}/pipelines/cpLinearizerLSSTCamSim.yaml"
 instrument: ${INSTRUMENT_CLASS}
 
-clusterAlgorithm: lsst.ctrl.bps.quantum_clustering_funcs.dimension_clustering
-cluster:
-  cp_linearizer_isr:
-    pipetasks: cpLinearizerIsr
-    dimensions: detector
-    partitionDimensions: exposure
-    partitionMaxClusters: 1000
-  cp_linearizer_ptc_extract_pair:
-    pipetasks: cpLinearizerPtcExtractPair
-    dimensions: detector
-    partitionDimensions: exposure
-    partitionMaxClusters: 1000
+#clusterAlgorithm: lsst.ctrl.bps.quantum_clustering_funcs.dimension_clustering
+#cluster:
+#  cp_linearizer_isr:
+#    pipetasks: cpLinearizerIsr
+#    dimensions: detector
+#    partitionDimensions: exposure
+#    partitionMaxClusters: 1000
+#  cp_linearizer_ptc_extract_pair:
+#    pipetasks: cpLinearizerPtcExtractPair
+#    dimensions: detector
+#    partitionDimensions: exposure
+#    partitionMaxClusters: 1000
 
 payload:
-  dataset_selection: ${DATASET_SELECTION}
   dataset_label: ${DATASET_LABEL}
   payload_modifier: ${PAYLOAD_MODIFIER}
   weekly: ${WEEKLY}
-  inCollection: u/{operator}/defects{payload_modifier}_{dataset_label}_{weekly},${INSTRUMENT_NAME}/calib/photodiode
+  inCollection: u/{operator}/defects{payload_modifier}_{dataset_label}_{weekly}
   payloadName: linearizer{payload_modifier}_{dataset_label}_{weekly}
   butlerConfig: ${BUTLER_CONFIG}
   dataQuery: "instrument='${INSTRUMENT_NAME}' and exposure.observation_type='flat' and exposure.observation_reason='ptc' ${DETECTOR_SELECTION}"
