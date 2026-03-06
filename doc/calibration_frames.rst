@@ -28,7 +28,7 @@ Generating Calibration Products
 
       $ bash scripts/ingest_raws.sh
 
-3. Run the calibration pipelines using ctrl_bps_parsl, e.g.,
+3. Run the calibration pipelines using ctrl_bps_parsl.  For ``LSSTCamSim``, we would the ``bps`` yaml files, in the following order:
 
    .. code-block:: bash
 
@@ -37,7 +37,9 @@ Generating Calibration Products
       $ bps submit bps/bps_cpFlatBootstrap.yaml
       $ bps submit bps/bps_cpDefects.yaml
       $ bps submit bps/bps_cpLinearizer.yaml
+      $ bps submit bps/bps_cpCti.yaml
       $ bps submit bps/bps_cpPtc.yaml
+      $ bps submit bps/bps_cpBFDistortionMatrix.yaml
       $ bps submit bps/bps_cpBias.yaml
       $ bps submit bps/bps_cpDark.yaml
       $ bps submit bps/bps_cpFlat.yaml

@@ -3,7 +3,7 @@ includeConfigs:
   - ${PWD}/bps/bps_parsl_config.yaml
 
 isrTaskName: cpFlatIsr
-extraQgraphOptions: "{isr_QgraphOptions} --config {isrTaskName}:doBrighterFatter=False --config {isrTaskName}:doDeferredCharge=False"
+extraQgraphOptions: "{isr_QgraphOptions} --config {isrTaskName}:doBrighterFatter=False"
 
 pipelineYaml: "${IMSIM_UTILS_DIR}/pipelines/cpFlat.yaml#cpFlatIsr,cpFlatMeasure,cpFlatNormalize,cpFlatCombine"
 instrument: ${INSTRUMENT_CLASS}
