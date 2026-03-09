@@ -1,0 +1,30 @@
+wmsServiceClass: lsst.ctrl.bps.parsl.ParslService
+computeSite: local
+#computeSite: task_vine
+
+parsl:
+  log_level: WARN
+
+site:
+  local:
+    class: lsst.ctrl.bps.parsl.sites.Local
+    cores: 120
+    monitorEnable: true
+    monitorFilename: runinfo/monitoring.db
+  task_vine:
+    class: bps_parsl_sites.SlurmTaskVine
+    walltime: "00:30:00"
+    qos: debug
+    constraint: cpu
+    exclusive: true
+    nodes_per_block: 1
+    provider_options:
+      init_blocks: 1
+      min_blocks: 0
+      max_blocks: 1
+    scheduler_options: |
+      #SBATCH --module=cvmfs
+      #SBATCH --account=m1727
+    worker_options: "--memory=480000"  # total memory in MB
+    monitorEnable: true
+    monitorFilename: runinfo/monitoring.db

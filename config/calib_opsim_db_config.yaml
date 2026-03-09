@@ -1,0 +1,14 @@
+template_db_file: /global/cfs/cdirs/descssim/imSim/lsst/data/baseline_v5.0.0_10yrs.db
+mjd_start: 61041.0
+visit_start: 3000000
+nbias: 20
+ndark: 20
+dark_time: 100.0
+nflat: 20
+flat_exptime: 60.0
+bands: ['u', 'g', 'r', 'i', 'z', 'y']
+num_pairs: 100
+ptc_exptime_min: 0.3
+ptc_exptime_max: 1e3
+ptc_band: 'i'
+outfile: calib_frames.db

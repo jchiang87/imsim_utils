@@ -1,0 +1,15 @@
+includeConfigs:
+  - ${PWD}/bps/bps_qgraph_options.yaml
+  - ${PWD}/bps/bps_parsl_config.yaml
+
+pipelineYaml: "${IMSIM_UTILS_DIR}/pipelines/cpBFDistortionMatrix.yaml"
+instrument: ${INSTRUMENT_CLASS}
+
+payload:
+  dataset_label: ${DATASET_LABEL}
+  weekly: ${WEEKLY}
+  payload_modifier: ${PAYLOAD_MODIFIER}
+  inCollection: u/{operator}/ptc{payload_modifier}_{dataset_label}_{weekly}
+  payloadName: bf_distortion_matrix{payload_modifier}_{dataset_label}_{weekly}
+  butlerConfig: ${BUTLER_CONFIG}
+  dataQuery: "instrument='${INSTRUMENT_NAME}'"

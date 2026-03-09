@@ -18,7 +18,7 @@ psf:
            fwhm: 0.3
 
 input.checkpoint: ""  # Turn off check pointing
-input.sky_catalog.file_name: /sdf/home/j/jchiang/dev/imSim/tests/data/sky_cat_9683.yaml
+input.sky_catalog.file_name: /global/cfs/cdirs/descssim/imSim/skyCatalogs_v1.1.2/skyCatalog.yaml
 input.opsim_data.file_name: calib_frames.db
 input.opsim_data.visit: 5000000
 
@@ -37,7 +37,7 @@ output.dir:
 output.det_num.first: 4
 output.nproc: 1
 output.nfiles: 1
-output.camera: LsstComCamSim
+output.camera: LsstCamSim
 output.timeout: 1e6
 output.truth: ""
 output.readout.added_keywords: {'IMGTYPE': 'flat', 'REASON': 'ptc',
