@@ -1,0 +1,105 @@
+description: LSSTCam specialization of the DRP pipeline
+instrument: lsst.obs.lsst.LsstCamSim
+imports:
+  - location: $DRP_PIPE_DIR/pipelines/_ingredients/base-v2.yaml
+    labeledSubsetModifyMode: EDIT
+    exclude:
+      - analysis-visit-initial
+      # We no longer exclude all the tasks in analysis-visit-recalibrated, but
+      # following three are still not needed.
+      - analyzeRecalibratedStar
+      - makeAnalysisRecalibratedStarPhotometricRefMatch
+      - analyzeRecalibratedStarPhotometricRefMatch
+      - analysis-visit-source
+      - step2b-recalibrate-tracts
+parameters:
+  use_cell_coadds: true
+  schemaFile: "lsstcam.yaml"
+tasks:
+  isr:
+    class: lsst.ip.isr.IsrTaskLSST
+    config:
+      ampOffset.doApplyAmpOffset: true
+  updateVisitSummary:
+    class: lsst.drp.tasks.update_visit_summary.UpdateVisitSummaryTask
+    config:
+      photo_calib_provider: global
+      background_provider: input_summary
+      wcs_provider: healpix3
+      connections.background_originals: preliminary_visit_image_background
+  makeDirectWarp:
+    class: lsst.drp.tasks.make_direct_warp.MakeDirectWarpTask
+    config:
+      numberOfNoiseRealizations: 1
+  selectTemplateCoaddVisits:
+    class: lsst.pipe.tasks.selectImages.BestSeeingQuantileSelectVisitsTask
+    config:
+      connections.visitSummaries: visit_summary
+      connections.goodVisits: template_coadd_visit_selection
+      nVisitsMin: 12
+      maxPsfFwhm: 1.4
+      python: |
+        config.visitSummaryMinValues = {'effTimeZeroPointScale': 0.75}
+  selectDeepCoaddVisits:
+    class: lsst.pipe.tasks.selectImages.BestSeeingSelectVisitsTask
+    config:
+      maxPsfFwhm: 1.7
+      python: |
+        config.visitSummaryMinValues = {'effTimeZeroPointScale': 0.75}
+  assembleCellCoadd:
+    class: lsst.drp.tasks.assemble_cell_coadd.AssembleCellCoaddTask
+    config:
+      num_noise_realizations: 1
+  detectCoaddPeaks:
+    class: lsst.pipe.tasks.multiBand.DetectCoaddSourcesTask
+    config:
+      # As of w_2025_30 DRP, lowest number of skyObjects seen is 9
+      # 9/0.02 = 450.
+      detection.skyObjects.nSources: 400
+      # Start with HSC configs and then refine
+      detection.doTempWideBackground: true
+      detection.tempWideBackground.binSize: 128
+      detection.tempWideBackground.useApprox: false
+      detection.reEstimateBackground: true
+      detection.background.binSize: 128
+      detection.background.useApprox: false
+  calibrateImage:
+    class: lsst.pipe.tasks.calibrateImage.CalibrateImageTask
+    config:
+      useButlerCamera: True
+      # The astrometry overrides below assume that butler visit regions have
+      # been updated after a round of processing, and as a result are *not*
+      # appropriate for nightly validation or quickLook pipelines.
+      astrometry.matcher.maxOffsetPix: 800
+      astrometry_ref_loader.pixelMargin: 800
+  standardizeDiaSource:
+    class: lsst.ap.association.TransformDiaSourceCatalogTask
+    config:
+      doUseSchema: True
+      schemaFile: parameters.schemaFile
+  associateDiaSource:
+    class: lsst.pipe.tasks.drpAssociationPipe.DrpAssociationPipeTask
+    config:
+      doUseSchema: True
+      schemaFile: parameters.schemaFile
+  consolidateDiaSource:
+    class: lsst.pipe.tasks.postprocess.ConsolidateTractTask
+    config:
+      doUseSchema: True
+      schemaFile: parameters.schemaFile
+      tableName: DiaSource
+  consolidateDiaObject:
+    class: lsst.pipe.tasks.postprocess.ConsolidateTractTask
+    config:
+      doUseSchema: True
+      schemaFile: parameters.schemaFile
+      tableName: DiaObject
+  analyzeRecalibratedStarAstrometricRefMatch:
+    class: lsst.analysis.tools.tasks.refCatSourceAnalysis.RefCatSourceAnalysisTask
+    config:
+      atools: None
+      atools.astromDiffMetrics: TargetRefCatDeltaMetrics
+      atools.astromDiffMetrics.applyContext: VisitContext
+      python: |
+        from lsst.analysis.tools.atools import *
+        from lsst.analysis.tools.contexts import VisitContext

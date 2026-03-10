@@ -1,0 +1,32 @@
+description: |
+  Pipeline to generate coadds without recalibration steps.
+
+imports:
+  - location: ${IMSIM_UTILS_DIR}/pipelines/_ingredients/LSSTCamSim/DRP.yaml
+
+tasks:
+  consolidateVisitSummary:
+    class: lsst.pipe.tasks.postprocess.ConsolidateVisitSummaryTask
+    config:
+      full: true
+  makeDirectWarp:
+    class: lsst.drp.tasks.make_direct_warp.MakeDirectWarpTask
+    config:
+      connections.visit_summary: preliminary_visit_summary
+  selectDeepCoaddVisits:
+    class: lsst.pipe.tasks.selectImages.BestSeeingSelectVisitsTask
+    config:
+      connections.visitSummaries: preliminary_visit_summary
+
+subsets:
+  coadd_pipeline_steps:
+    subset:
+      - isr
+      - calibrateImage
+      - consolidateVisitSummary
+      - makeDirectWarp
+      - makePsfMatchedWarp
+      - selectDeepCoaddVisits
+      - assembleDeepCoadd
+    description: |
+      Subset of DRP tasks to produce coadds.
