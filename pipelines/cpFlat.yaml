@@ -12,3 +12,4 @@ tasks:
       doPartialVignetteMask: true
       # This radius is from RFC-1125.
       partialVignette.radius: 317.0
+      connections.outputData: flat
