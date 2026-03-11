@@ -5,6 +5,17 @@ imports:
   - location: ${IMSIM_UTILS_DIR}/pipelines/_ingredients/LSSTCamSim/DRP.yaml
 
 tasks:
+  calibrateImage:
+    class: lsst.pipe.tasks.calibrateImage.CalibrateImageTask
+    config:
+      connections.astrometry_ref_cat: "euclid_stars_20251027"
+      connections.photometry_ref_cat: "euclid_stars_20251027"
+      python: |
+        config.photometry.applyColorTerms = False
+        config.photometry.match.referenceSelection.magLimit.fluxField = "lsst_i_flux"
+        config.astrometry_ref_loader.filterMap = {band: 'lsst_%s' % (band) for band in 'gri'}
+        config.astrometry_ref_loader.anyFilterMapsToThis = None
+        config.photometry_ref_loader.filterMap = {band: 'lsst_%s' % (band) for band in 'gri'}
   consolidateVisitSummary:
     class: lsst.pipe.tasks.postprocess.ConsolidateVisitSummaryTask
     config:
