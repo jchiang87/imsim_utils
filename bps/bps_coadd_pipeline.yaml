@@ -1,0 +1,46 @@
+includeConfigs:
+  - ${DRP_PIPE_DIR}/bps/resources/LSSTCam/DRP.yaml
+
+LSST_VERSION: ${WEEKLY}
+
+pipelineYaml: "${IMSIM_UTILS_DIR}/pipelines/DRP.yaml#coadd_pipeline_steps"
+
+payload:
+  payloadName: stage1_test_{LSST_VERSION}_v0
+  butlerConfig: ./repo
+  inCollection: LSSTCamSim/raw/all,LSSTCamSim/calib,u/jchiang8/calib.2026-03-08,refcats,skymaps
+  dataQuery: "instrument='LSSTCamSim' and day_obs=20280217"
+
+extraQgraphOptions: "--dataset-query-constraint raw --config isr:doCrosstalk=False --config isr:doBrighterFatter=False"
+extraRunQuantumOptions: "--no-raise-on-partial-outputs"
+
+wmsServiceClass: lsst.ctrl.bps.parsl.ParslService
+computeSite: local
+#computeSite: task_vine
+
+parsl:
+  log_level: WARN
+
+site:
+  local:
+    class: lsst.ctrl.bps.parsl.sites.Local
+    cores: 16
+    monitorEnable: true
+    monitorFilename: runinfo/monitoring.db
+  task_vine:
+    class: bps_parsl_sites.SlurmTaskVine
+    walltime: "00:30:00"
+    qos: debug
+    constraint: cpu
+    exclusive: true
+    nodes_per_block: 1
+    provider_options:
+      init_blocks: 1
+      min_blocks: 0
+      max_blocks: 1
+    scheduler_options: |
+      #SBATCH --module=cvmfs
+      #SBATCH --account=m1727
+    worker_options: "--memory=480000"  # total memory in MB
+    monitorEnable: true
+    monitorFilename: runinfo/monitoring.db
