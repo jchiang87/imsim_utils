@@ -39,5 +39,6 @@ subsets:
       - makePsfMatchedWarp
       - selectDeepCoaddVisits
       - assembleDeepCoadd
+      - assembleCellCoadd
     description: |
       Subset of DRP tasks to produce coadds.
