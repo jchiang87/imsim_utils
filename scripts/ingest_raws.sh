@@ -8,4 +8,4 @@ RAWDIR=$2
 
 #butler --log-level DEBUG ingest-raws --transfer direct ${repo} ${raw_dir}/*R22_S11*.fits.fz
 butler --log-level DEBUG ingest-raws --transfer direct ${REPO} ${RAWDIR}/amp*.fits.fz
-#butler define-visits ${REPO} LSSTCamSim
+butler define-visits ${REPO} LSSTCamSim # uncommented
