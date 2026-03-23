@@ -1,7 +1,8 @@
 #!/bin/bash
 set -xe
 
-REPO=./repo
+REPO=$1
+#REPO=./repo
 
 butler create ${REPO}
 butler register-instrument ${REPO} lsst.obs.lsst.LsstCamSim
