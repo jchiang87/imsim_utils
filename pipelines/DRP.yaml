@@ -28,6 +28,10 @@ tasks:
     class: lsst.pipe.tasks.selectImages.BestSeeingSelectVisitsTask
     config:
       connections.visitSummaries: preliminary_visit_summary
+  assembleCellCoadd:
+    class: lsst.drp.tasks.assemble_cell_coadd.AssembleCellCoaddTask
+    config:
+      connections.visitSummaryList: preliminary_visit_summary
 
 subsets:
   coadd_pipeline_steps:
@@ -39,5 +43,6 @@ subsets:
       - makePsfMatchedWarp
       - selectDeepCoaddVisits
       - assembleDeepCoadd
+      - assembleCellCoadd
     description: |
       Subset of DRP tasks to produce coadds.
