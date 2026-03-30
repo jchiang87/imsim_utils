@@ -44,5 +44,6 @@ subsets:
       - selectDeepCoaddVisits
       - assembleDeepCoadd
       - assembleCellCoadd
+      - detectCoaddPeaks
     description: |
       Subset of DRP tasks to produce coadds.
