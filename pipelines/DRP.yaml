@@ -20,19 +20,18 @@ tasks:
     class: lsst.pipe.tasks.postprocess.ConsolidateVisitSummaryTask
     config:
       full: true
+      connections.visitSummary: visit_summary
+      connections.visitSummarySchema: visit_summary_schema
   makeDirectWarp:
     class: lsst.drp.tasks.make_direct_warp.MakeDirectWarpTask
-    config:
-      connections.visit_summary: preliminary_visit_summary
   selectDeepCoaddVisits:
     class: lsst.pipe.tasks.selectImages.BestSeeingSelectVisitsTask
-    config:
-      connections.visitSummaries: preliminary_visit_summary
   assembleCellCoadd:
     class: lsst.drp.tasks.assemble_cell_coadd.AssembleCellCoaddTask
+  measureObjectUnforced:
+    class: lsst.pipe.tasks.multiBand.MeasureMergedCoaddSourcesTask
     config:
-      connections.visitSummaryList: preliminary_visit_summary
-
+      doPropagateFlags: false
 subsets:
   coadd_pipeline_steps:
     subset:
