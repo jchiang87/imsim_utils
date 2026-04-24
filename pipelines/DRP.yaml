@@ -45,5 +45,11 @@ subsets:
       - assembleDeepCoadd
       - assembleCellCoadd
       - detectCoaddPeaks
+      - mergeObjectDetection
+      - deconvolve
+      - deblendCoaddFootprints
+      - measureObjectUnforced
+      - mergeObjectMeasurement
+      - measureObjectForced
     description: |
-      Subset of DRP tasks to produce coadds.
+      Subset of DRP tasks to produce coadds and do initial object measurements.
