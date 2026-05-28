@@ -18,7 +18,10 @@ parser.add_argument("--opsim_db_file", type=str,
                     help="Calibration opsim db file")
 parser.add_argument("--cores_per_node", type=int, default=120,
                     help="Number of cores per node to use")
-parser.add_argument("--nproc", type=int, default=4,
+parser.add_argument("--nfiles", type=int, default=9,
+                    help=("number of files (CCDs) to process "
+                          "per galsim instance"))
+parser.add_argument("--nproc", type=int, default=10,
                     help="number of processes per galsim instance")
 parser.add_argument("--mem_per_core", type=int, default=4000,
                     help="memory per core in MB")
@@ -37,8 +40,11 @@ calib_type = args.calib_type
 # for workflow management and system-related work:
 cores_per_node = args.cores_per_node
 
+# Number of files/CCDs for each galsim instance to process
+nfiles = args.nfiles
+
 # Number of processes used by each galsim instance:
-nproc = args.nproc
+nproc = min(args.nproc, nfiles)  # enforce nfiles >= nproc
 
 # There will be one galsim instance per thread:
 max_threads = cores_per_node // nproc
@@ -61,7 +67,7 @@ load_wq_config(
 opsim_db_file = args.opsim_db_file
 
 assert os.path.isfile(opsim_db_file)
-with sqlite3.connect(config_path(opsim_db_file)) as con:
+with sqlite3.connect(opsim_db_file) as con:
     df = pd.read_sql("select * from observations where "
                      f"target_name='{calib_type}'", con)
 
@@ -78,7 +84,7 @@ else:
 target_dets = {_: set(target_det_range) for _ in visits}
 
 generator = GalSimJobGenerator(imsim_yaml, visits,
-                               nfiles=9, nproc=nproc,
+                               nfiles=nfiles, nproc=nproc,
                                target_dets=target_dets,
                                GB_per_CCD=3, GB_per_PSF=8,
                                clean_up_atm_psfs=False,

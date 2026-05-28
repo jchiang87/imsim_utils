@@ -19,7 +19,7 @@ psf:
 
 input.checkpoint: ""  # Turn off check pointing
 input.sky_catalog.file_name: /global/cfs/cdirs/descssim/imSim/skyCatalogs_v1.1.2/skyCatalog.yaml
-input.opsim_data.file_name: sky_flat_calib_frames.db
+input.opsim_data.file_name: calib_frames.db
 input.opsim_data.visit: 4000000
 
 image.nobjects: 0
