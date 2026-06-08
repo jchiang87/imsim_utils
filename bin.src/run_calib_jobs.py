@@ -86,7 +86,7 @@ target_dets = {_: set(target_det_range) for _ in visits}
 generator = GalSimJobGenerator(imsim_yaml, visits,
                                nfiles=nfiles, nproc=nproc,
                                target_dets=target_dets,
-                               GB_per_CCD=3, GB_per_PSF=8,
+                               GB_per_CCD=3, GB_per_PSF=1,
                                clean_up_atm_psfs=False,
                                bash_app_executor='thread_pool',
                                log_dir='logging',
